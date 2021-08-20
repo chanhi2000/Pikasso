@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
 			pikassoView.lineWidth = sbLineWidth.progress.toFloat()
 			dialogWidthChange.dismiss()
 		}
+		sbLineWidth.progress = pikassoView.lineWidth.toInt()
 		sbLineWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			val bitmap = Bitmap.createBitmap(400, 100, Bitmap.Config.ARGB_8888)
 			val canvas = Canvas(bitmap)

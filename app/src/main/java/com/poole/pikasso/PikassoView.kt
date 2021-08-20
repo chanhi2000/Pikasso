@@ -212,7 +212,7 @@ class PikassoView @JvmOverloads constructor(
 	companion object {
 		const val TOUCH_TOLERANCE = 10
 		const val DEFAULT_COLOR_DRAWING: Int = Color.BLACK
-		const val DEFAULT_LINE_WIDTH: Float = 7f
+		const val DEFAULT_LINE_WIDTH: Float = 5f
 
 	}
 }
