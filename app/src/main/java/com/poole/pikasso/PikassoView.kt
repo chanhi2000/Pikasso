@@ -1,21 +1,40 @@
 package com.poole.pikasso
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import java.io.*
 import kotlin.math.abs
 
 class PikassoView @JvmOverloads constructor(
-	ctx: Context,
+	val ctx: Context,
 	attrs: AttributeSet? = null,
 	defStyle: Int = 0
 ): View(ctx, attrs, defStyle) {
 
 	init {initPikasso()}
 	fun initPikasso() {
+	}
+
+	private val imageStorePath: String by lazy {
+		"${ctx.getExternalFilesDir("imagesPikasso")}".also { pth ->
+			File(pth).let {
+				if (!it.exists()){
+					val mkdir = it.mkdir()
+					Log.d("initPikass", "new directory `$mkdir` is created ...")
+				}
+			}
+		}
 	}
 	private var bitmap: Bitmap? = null
 	private var bitmapCanvas: Canvas? = null
@@ -136,6 +155,45 @@ class PikassoView @JvmOverloads constructor(
 		invalidate()
 	}
 
+	fun save() {
+		val cw = ContextWrapper(ctx)
+		val current = System.currentTimeMillis()
+		val fileName = "Pikasso${current}"
+		val myPath = File(imageStorePath, "${fileName}.png")
+		var fos: FileOutputStream? = null
+		CoroutineScope(IO).launch {
+			try {
+				fos = FileOutputStream(myPath).also {
+					bitmap?.compress(Bitmap.CompressFormat.PNG, 100, it)
+				}
+			} catch (e: FileNotFoundException) {
+				e.printStackTrace()
+			} finally {
+				try {
+					fos?.flush()
+					fos?.close()
+					Log.d("saveImage", imageStorePath)
+					CoroutineScope(Main).launch {
+						ctx.customToast("✅ Image Saved to ${imageStorePath}", Toast.LENGTH_LONG) {
+							setGravity(Gravity.CENTER, this.xOffset / 2, this.yOffset / 2)
+						}
+					}
+				} catch (e: IOException) {
+					e.printStackTrace()
+				}
+			}
+		}
+	}
+
+	fun load(from: String) {
+		try {
+			val f = File(from, "profile.png")
+			val b = BitmapFactory.decodeStream(FileInputStream(f))
+		} catch(e: FileNotFoundException) {
+			e.printStackTrace()
+		}
+	}
+
 	var drawingColor: Int = DEFAULT_COLOR_DRAWING
 		set(value) {
 			field = value
@@ -155,5 +213,6 @@ class PikassoView @JvmOverloads constructor(
 		const val TOUCH_TOLERANCE = 10
 		const val DEFAULT_COLOR_DRAWING: Int = Color.BLACK
 		const val DEFAULT_LINE_WIDTH: Float = 7f
+
 	}
 }

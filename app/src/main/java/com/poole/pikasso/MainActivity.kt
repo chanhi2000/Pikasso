@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when(item.itemId) {
 			R.id.clearId -> {pikassoView.clear()}
-			R.id.saveId -> {}
+			R.id.saveId -> {pikassoView.save()}
 			R.id.colorId -> {showColorDialog()}
 			R.id.lineWidthId -> {showLineWidthDialog()}
 		}
