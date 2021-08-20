@@ -19,15 +19,21 @@ import androidx.appcompat.widget.Toolbar
 class MainActivity : AppCompatActivity() {
 	private val pikassoView: PikassoView by lazy { find(R.id.pikassoView) }
 	private val toolbar: Toolbar by lazy { find(R.id.toolbarMain) }
-	private val alert: AlertDialog by lazy {
-		AlertDialog.Builder(this)
-			.setView(dialogLayout)
-			.create()
-	}
-	private val dialogLayout: View by lazy { layoutInflater.inflate(R.layout.dialog_width, null) }
-	private val ivEdit: ImageView by lazy { dialogLayout.find(R.id.ivEdit)}
-	private val btnSet: Button by lazy { dialogLayout.find(R.id.btnSet) }
-	private val sbWidth: SeekBar by lazy { dialogLayout.find(R.id.sbWidth) }
+	private val dialogWidthChange: AlertDialog by lazy { AlertDialog.Builder(this).setView(dlWidth).create() }
+	private val dlWidth: View by lazy { layoutInflater.inflate(R.layout.dialog_width, null) }
+	private val ivEdit: ImageView by lazy { dlWidth.find(R.id.ivEdit)}
+	private val btnLineWidthSet: Button by lazy { dlWidth.find(R.id.btnLineWidthSet) }
+	private val sbLineWidth: SeekBar by lazy { dlWidth.find(R.id.sbLineWidth) }
+
+	private val dialogColorChange: AlertDialog by lazy { AlertDialog.Builder(this).setTitle("Choose Color").setView(dlColor).create() }
+	private val dlColor: View by lazy { layoutInflater.inflate(R.layout.dialog_color, null)}
+	private val sbAlpha: SeekBar by lazy { dlColor.find(R.id.sbAlpha) }
+	private val sbRed: SeekBar by lazy { dlColor.find(R.id.sbRed) }
+	private val sbGreen: SeekBar by lazy { dlColor.find(R.id.sbGreen) }
+	private val sbBlue: SeekBar by lazy { dlColor.find(R.id.sbBlue) }
+	private val colorView: View by lazy { dlColor.find(R.id.colorView) }
+	private val btnColorSet: Button by lazy { dlColor.find(R.id.btnColorSet) }
+
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -54,19 +60,47 @@ class MainActivity : AppCompatActivity() {
 		when(item.itemId) {
 			R.id.clearId -> {pikassoView.clear()}
 			R.id.saveId -> {}
-			R.id.colorId -> {}
+			R.id.colorId -> {showColorDialog()}
 			R.id.lineWidthId -> {showLineWidthDialog()}
 		}
 		return super.onOptionsItemSelected(item)
 	}
 
+	fun showColorDialog() {
+		dialogColorChange.show()
+		btnColorSet.click {
+			pikassoView.drawingColor = Color.argb(sbAlpha.progress, sbRed.progress, sbBlue.progress, sbGreen.progress)
+			dialogColorChange.dismiss()
+		}
+		sbAlpha.setOnSeekBarChangeListener(colorSeekBarChangeListener)
+		sbRed.setOnSeekBarChangeListener(colorSeekBarChangeListener)
+		sbBlue.setOnSeekBarChangeListener(colorSeekBarChangeListener)
+		sbGreen.setOnSeekBarChangeListener(colorSeekBarChangeListener)
+
+		with(pikassoView.drawingColor) {
+			sbAlpha.progress = Color.alpha(this)
+			sbRed.progress = Color.red(this)
+			sbBlue.progress = Color.blue(this)
+			sbGreen.progress = Color.green(this)
+		}
+	}
+
+	private var colorSeekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
+		override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+			colorView.setBackgroundColor(Color.argb(sbAlpha.progress, sbRed.progress, sbBlue.progress, sbGreen.progress))
+		}
+		override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+		override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+	}
 
 	fun showLineWidthDialog() {
-		alert.show()
-		btnSet.click {
-			toast("Hello")
+		dialogWidthChange.show()
+		btnLineWidthSet.click {
+//			toast("Hello")
+			pikassoView.lineWidth = sbLineWidth.progress.toFloat()
+			dialogWidthChange.dismiss()
 		}
-		sbWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+		sbLineWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			val bitmap = Bitmap.createBitmap(400, 100, Bitmap.Config.ARGB_8888)
 			val canvas = Canvas(bitmap)
 

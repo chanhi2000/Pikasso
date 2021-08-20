@@ -5,4 +5,9 @@
     <string name="lineWidth">Line Width</string>
     <string name="clear">Clear</string>
     <string name="btnTextSet">SET</string>
+    <string name="alpha">Alpha</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="setColor">set color</string>
 </resources>
