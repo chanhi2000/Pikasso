@@ -1,6 +1,6 @@
 # Pikasso
 
-> A Simple Drawing App with Fundamental Drawing Feature(s)
+> A Simple Drawing App with Fundamental Drawing Feature(s) 
 
 ## Quickstart
 
@@ -17,7 +17,9 @@
 
 ## Feature(s)
 
-> Explain what kind of thing(s) it can do here.
+ - 🖌: it can draw on canvas 
+ - 🎨: change color of pen
+ - 💾: save image to local device
 
 ## Reference
 
