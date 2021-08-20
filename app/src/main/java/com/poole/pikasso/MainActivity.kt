@@ -1,81 +1,88 @@
 package com.poole.pikasso
 
+import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumeAllChanges
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.poole.pikasso.ui.theme.PikassoTheme
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.SeekBar
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppCompatActivity() {
+	private val pikassoView: PikassoView by lazy { find(R.id.pikassoView) }
+	private val toolbar: Toolbar by lazy { find(R.id.toolbarMain) }
+	private val alert: AlertDialog by lazy {
+		AlertDialog.Builder(this)
+			.setView(dialogLayout)
+			.create()
+	}
+	private val dialogLayout: View by lazy { layoutInflater.inflate(R.layout.dialog_width, null) }
+	private val ivEdit: ImageView by lazy { dialogLayout.find(R.id.ivEdit)}
+	private val btnSet: Button by lazy { dialogLayout.find(R.id.btnSet) }
+	private val sbWidth: SeekBar by lazy { dialogLayout.find(R.id.sbWidth) }
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContent {
-			PikassoTheme {
-				Surface(color = MaterialTheme.colors.background) {
-					Greeting("Android")
-				}
-			}
+		setContentView(R.layout.activity_main)
+		setSupportActionBar(toolbar)
+//		actionBar?.setDisplayShowCustomEnabled(false)
+//		actionBar?.setDisplayShowHomeEnabled(true)
+//		actionBar?.displayOptions = ActionBar.DISPLAY_SHOW_HOME
+//		setContent {
+//			PikassoTheme {
+//				Surface(color = MaterialTheme.colors.background) {
+//					Greeting("Android")
+//				}
+//			}
+//		}
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		menuInflater.inflate(R.menu.menu, menu)
+		return true
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		when(item.itemId) {
+			R.id.clearId -> {pikassoView.clear()}
+			R.id.saveId -> {}
+			R.id.colorId -> {}
+			R.id.lineWidthId -> {showLineWidthDialog()}
 		}
+		return super.onOptionsItemSelected(item)
+	}
+
+
+	fun showLineWidthDialog() {
+		alert.show()
+		btnSet.click {
+			toast("Hello")
+		}
+		sbWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+			val bitmap = Bitmap.createBitmap(400, 100, Bitmap.Config.ARGB_8888)
+			val canvas = Canvas(bitmap)
+
+			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+				val p = Paint().apply {
+					color = pikassoView.drawingColor
+					strokeCap = Paint.Cap.ROUND
+					strokeWidth = progress.toFloat()
+				}
+				bitmap.eraseColor(Color.WHITE)
+				canvas.drawLine(30f, 50f, 370f ,50f, p)
+				ivEdit.setImageBitmap(bitmap)
+			}
+			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+			override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+		})
 	}
 }
 
-@Composable
-fun SampleCanvas() {
-	Canvas(modifier = Modifier.clipToBounds()
-		.fillMaxWidth()
-		.height(100.dp)
-		.border(1.dp, MaterialTheme.colors.primaryVariant, shape = RoundedCornerShape(4.dp))
-		.pointerInput(Unit) {
-
-        }
-	) {
-		val canvasW = size.width
-		val canvasH = size.height
-
-		drawLine(
-			start = Offset(x = canvasW, y = 0f),
-			end = Offset(x = 0f, y = canvasH),
-			color = Color.Blue,
-			strokeWidth = 5f
-		)
-	}
-}
-
-@Composable
-fun Greeting(name: String) {
-	Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-	PikassoTheme {
-		Greeting("Android")
-	}
-}
-
-@Preview("Canvas위에 대각선 그리기", showBackground = true)
-@Composable
-fun CanvasPreview() {
-	PikassoTheme {
-		SampleCanvas()
-	}
-}

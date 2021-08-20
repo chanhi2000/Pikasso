@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/dialogWidth"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="25dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView android:id="@+id/ivEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxHeight="50dp"
+        android:padding="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="5dp"
+        app:srcCompat="@drawable/ic_edit_24"/>
+
+    <SeekBar android:id="@+id/sbWidth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:padding="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivEdit"
+        android:layout_marginVertical="5dp"/>
+
+    <Button android:id="@+id/btnSet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxHeight="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sbWidth"
+        android:text="@string/btnTextSet"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
